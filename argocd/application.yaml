@@ -9,7 +9,7 @@ spec:
   source:
     path: argocd
     repoURL: 'https://github.com/waaghals/cluster-management.git'
-    targetRevision: HEAD
+    targetRevision: main
   project: cluster-management
   syncPolicy:
     automated:
