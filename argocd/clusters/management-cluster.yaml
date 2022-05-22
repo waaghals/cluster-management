@@ -1,0 +1,15 @@
+# Special type of cluster, which is local
+apiVersion: v1
+data:
+  config: eyJ0bHNDbGllbnRDb25maWciOnsiaW5zZWN1cmUiOmZhbHNlfX0=
+  name: bWFuYWdlbWVudC1jbHVzdGVy
+  server: aHR0cHM6Ly9rdWJlcm5ldGVzLmRlZmF1bHQuc3Zj
+kind: Secret
+metadata:
+  annotations:
+    managed-by: argocd.argoproj.io
+  labels:
+    argocd.argoproj.io/secret-type: cluster
+    type: management
+  name: management
+type: Opaque

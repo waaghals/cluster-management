@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: root
+spec:
+  generators:
+    - git:
+        repoURL: 'https://github.com/waaghals/cluster-management.git'
+        revision: main
+        # TODO fix pattern
+        directories:
+          - path: 'argocd'
+          - path: 'prometheus-operator'
+  template:
+    metadata:
+      name: '{{path.basename}}'
+    spec:
+      project: cluster-management
+      source:
+        repoURL: https://github.com/waaghals/cluster-management.git
+        targetRevision: main
+        path: '{{path}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{path.basename}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true

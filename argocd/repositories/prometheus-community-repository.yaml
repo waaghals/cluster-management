@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: prometheus-community-repository
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  url: https://prometheus-community.github.io/helm-charts/
+  name: prometheus-community
+  type: helm

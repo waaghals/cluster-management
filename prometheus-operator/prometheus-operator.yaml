@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: prometheus-operator
+  namespace: prometheus-operator
+spec:
+  generators:
+    - clusters: {} # All clusters
+  template:
+    metadata:
+      name: prometheus-operator-{{name}}
+    spec:
+      project: cluster-management
+      source:
+        chart: prometheus-community/kube-prometheus-stack
+        repoURL: https://prometheus-community.github.io/helm-charts
+        targetRevision: 35.3.0
+        helm:
+          # Disable grafana deployment, as we manage it separately.
+          # Disable alertmanager as we do not use it
+          parameters:
+            - name: "alertmanager"
+              value: false
+            - name: "grafana"
+              value: false
+      destination:
+        server: '{{server}}'
+        namespace: prometheus-operator

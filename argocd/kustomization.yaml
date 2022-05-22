@@ -4,7 +4,9 @@ kind: Kustomization
 namespace: argocd
 resources:
   - namespace.yaml
+  - repositories/prometheus-community-repository.yaml
   - https://raw.githubusercontent.com/argoproj/argo-cd/ac8b7df9467ffcc0920b826c62c4b603a7bfed24/manifests/install.yaml
+  - clusters/management-cluster.yaml
   - projects/cluster-manager.yaml
-  - application.yaml
+  - applications/root.yaml
   - ingress.yaml
