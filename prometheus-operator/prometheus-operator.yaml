@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
   name: prometheus-operator
-  namespace: prometheus-operator
+  namespace: argocd
 spec:
   generators:
     - clusters: {} # All clusters
