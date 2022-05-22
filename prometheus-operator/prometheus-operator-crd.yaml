@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: prometheus-operator-crd
+  namespace: argocd
+spec:
+  generators:
+    - clusters: {} # All clusters
+  template:
+    metadata:
+      name: prometheus-operator-crd-{{name}}
+    spec:
+      project: cluster-management
+      source:
+        path: charts/kube-prometheus-stack/crds/
+        directory:
+          recurse: true
+        repoURL: https://github.com/prometheus-community/helm-charts.git
+        # keep this value in sync with the chart value in prometheus-operator
+        targetRevision: kube-prometheus-stack-35.3.0
+      destination:
+        server: '{{server}}'
+        namespace: prometheus-operator
+      syncPolicy:
+        syncOptions:
+          - Replace=true
