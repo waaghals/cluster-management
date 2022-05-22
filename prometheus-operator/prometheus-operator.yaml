@@ -19,9 +19,9 @@ spec:
           # Disable grafana deployment, as we manage it separately.
           # Disable alertmanager as we do not use it
           parameters:
-            - name: "alertmanager"
+            - name: "alertmanager.enabled"
               value: "false"
-            - name: "grafana"
+            - name: "grafana.enabled"
               value: "false"
       destination:
         server: '{{server}}'
