@@ -29,3 +29,5 @@ spec:
       syncPolicy:
         syncOptions:
           - CreateNamespace=true
+          # https://github.com/prometheus-operator/prometheus-operator/issues/4439
+          - Replace=true
