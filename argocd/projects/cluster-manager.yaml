@@ -18,3 +18,4 @@ spec:
       kind: '*'
   sourceRepos:
     - https://github.com/waaghals/cluster-management.git
+    - https://prometheus-community.github.io/helm-charts/
