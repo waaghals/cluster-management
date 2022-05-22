@@ -12,7 +12,7 @@ spec:
     spec:
       project: cluster-management
       source:
-        chart: prometheus-community/kube-prometheus-stack
+        chart: kube-prometheus-stack
         repoURL: https://prometheus-community.github.io/helm-charts
         targetRevision: 35.3.0
         helm:
