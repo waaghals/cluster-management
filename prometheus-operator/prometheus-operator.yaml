@@ -26,3 +26,6 @@ spec:
       destination:
         server: '{{server}}'
         namespace: prometheus-operator
+      syncPolicy:
+        syncOptions:
+          - CreateNamespace=true
