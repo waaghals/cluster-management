@@ -20,9 +20,9 @@ spec:
           # Disable alertmanager as we do not use it
           parameters:
             - name: "alertmanager"
-              value: false
+              value: "false"
             - name: "grafana"
-              value: false
+              value: "false"
       destination:
         server: '{{server}}'
         namespace: prometheus-operator
