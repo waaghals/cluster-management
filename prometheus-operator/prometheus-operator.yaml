@@ -25,6 +25,12 @@ spec:
               value: "false"
             - name: "grafana.enabled"
               value: "false"
+            - name: "prometheus.ingress.enabled"
+              value: "true"
+            - name: "prometheus.ingress.ingressClassName"
+              value: "nginx"
+            - name: "prometheus.ingress.hosts"
+              value: "{prometheus.{{name}}.test}"
       destination:
         server: '{{server}}'
         namespace: prometheus-operator
