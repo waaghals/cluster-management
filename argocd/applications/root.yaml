@@ -11,6 +11,7 @@ spec:
         directories:
           - path: 'argocd'
           - path: 'prometheus-operator'
+          - path: 'hashicorp'
   template:
     metadata:
       name: '{{path.basename}}'
