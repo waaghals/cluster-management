@@ -1,0 +1,45 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: external-dns
+  namespace: argocd
+spec:
+  generators:
+    - clusters: {} # All clusters
+  template:
+    metadata:
+      name: external-dns-{{name}}
+    spec:
+      project: cluster-management
+      source:
+        chart: external-dns
+        repoURL: https://kubernetes-sigs.github.io/external-dns/
+        targetRevision: 1.9.0
+        helm:
+          values: |
+            logFormat: json
+            domainFilters:
+               - {{name}}.waaghals.dev
+            provider: google
+            env:
+              - name: GOOGLE_APPLICATION_CREDENTIALS
+                value: /etc/gcloud/gcloud-credentials.json
+            extraVolumeMounts:
+              - mountPath: /etc/gcloud
+                name: gcloud-config
+                readOnly: true
+            extraVolumes:
+              - name: gcloud-config
+                secret:
+                  secretName: gcloud-config
+            extraArgs:
+              - --google-project=waaghals-development
+      destination:
+        server: '{{server}}'
+        namespace: external-dns
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

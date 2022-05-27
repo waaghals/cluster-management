@@ -12,6 +12,7 @@ spec:
           - path: 'argocd'
           - path: 'prometheus-operator'
           - path: 'hashicorp'
+          - path: 'external-dns'
   template:
     metadata:
       name: '{{path.basename}}'
