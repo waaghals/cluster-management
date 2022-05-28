@@ -13,6 +13,7 @@ spec:
           - path: 'prometheus-operator'
           - path: 'hashicorp'
           - path: 'external-dns'
+          - path: 'cert-manager'
   template:
     metadata:
       name: '{{path.basename}}'

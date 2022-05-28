@@ -20,17 +20,23 @@ spec:
           skipCrds: true
           # Disable grafana deployment, as we manage it separately.
           # Disable alertmanager as we do not use it
-          parameters:
-            - name: "alertmanager.enabled"
-              value: "false"
-            - name: "grafana.enabled"
-              value: "false"
-            - name: "prometheus.ingress.enabled"
-              value: "true"
-            - name: "prometheus.ingress.ingressClassName"
-              value: "nginx"
-            - name: "prometheus.ingress.hosts"
-              value: "{prometheus.{{name}}.waaghals.dev}"
+          values: |
+            grafana:
+              enabled: false
+            alertmanager:
+              enabled: false
+            prometheus:
+              ingress:
+                enabled: true
+                ingressClassName: nginx
+                annotations:
+                  cert-manager.io/cluster-issuer: letsencrypt
+                hosts:
+                  - prometheus.{{name}}.waaghals.dev
+                tls:
+                  - secretName: prometheus-cert
+                    hosts:
+                      - prometheus.{{name}}.waaghals.dev
       destination:
         server: '{{server}}'
         namespace: prometheus-operator

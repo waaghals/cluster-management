@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: cert-manager
+  namespace: argocd
+spec:
+  generators:
+    - clusters: {} # All clusters
+  template:
+    metadata:
+      name: cert-manager-{{name}}
+    spec:
+      project: cluster-management
+      source:
+        chart: cert-manager
+        repoURL: https://charts.jetstack.io
+        targetRevision: v1.8.0
+        helm:
+          parameters:
+            - name: "installCRDs"
+              value: "true"
+            - name: "prometheus.enabled"
+              value: "true"
+            - name: "prometheus.servicemonitor.enabled"
+              value: "true"
+            - name: "extraArgs"
+              value: "{--dns01-recursive-nameservers=8.8.8.8:53,1.1.1.1:53}"
+      destination:
+        server: '{{server}}'
+        namespace: cert-manager
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

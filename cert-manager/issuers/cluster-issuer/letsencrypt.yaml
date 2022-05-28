@@ -1,0 +1,17 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt
+spec:
+  acme:
+    email: waaghals@protonmail.com
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: lets-encrypt-account-key
+    solvers:
+      - dns01:
+          cloudDNS:
+            project: 'waaghals-development'
+            serviceAccountSecretRef:
+              name: gcloud
+              key: gcloud-credentials.json

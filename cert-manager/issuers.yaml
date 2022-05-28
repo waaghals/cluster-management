@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: issuers
+  namespace: argocd
+spec:
+  generators:
+    - clusters: {} # All clusters
+  template:
+    metadata:
+      name: cert-manager-issuers-{{name}}
+    spec:
+      project: cluster-management
+      source:
+        repoURL: https://github.com/waaghals/cluster-management.git
+        targetRevision: main
+        path: 'cert-manager/issuers'
+        plugin:
+          name: argocd-vault-plugin-kustomize
+      destination:
+        server: '{{server}}'
+        namespace: 'cert-manager'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
