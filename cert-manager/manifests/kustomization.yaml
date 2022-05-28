@@ -8,3 +8,14 @@ resources:
   - cluster-issuer/ca.yaml
   - cluster-issuer/letsencrypt.yaml
   - secret/glcoud.yaml
+
+patchesStrategicMerge:
+  - patch-configmap.yaml
+
+configMapGenerator:
+  - name: grafana-dashboard
+    files:
+      - dashboard.json
+
+generatorOptions:
+  disableNameSuffixHash: true

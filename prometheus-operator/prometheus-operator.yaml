@@ -18,11 +18,26 @@ spec:
         targetRevision: 35.3.0
         helm:
           skipCrds: true
-          # Disable grafana deployment, as we manage it separately.
           # Disable alertmanager as we do not use it
           values: |
             grafana:
-              enabled: false
+              enabled: true
+              ingress:
+                enabled: true
+                ingressClassName: nginx
+                annotations:
+                  cert-manager.io/cluster-issuer: letsencrypt
+                hosts:
+                  - grafana.{{name}}.waaghals.dev
+                tls:
+                  - secretName: grafana-cert
+                    hosts:
+                      - grafana.{{name}}.waaghals.dev
+              sidecar:
+                dashboards:
+                  enabled: true
+                  labelValue: null
+                  searchNamespace: ALL
             alertmanager:
               enabled: false
             prometheus:
@@ -37,6 +52,11 @@ spec:
                   - secretName: prometheus-cert
                     hosts:
                       - prometheus.{{name}}.waaghals.dev
+              prometheusSpec:
+                serviceMonitorSelectorNilUsesHelmValues: false
+                podMonitorSelectorNilUsesHelmValues: false
+                probeSelectorNilUsesHelmValues: false
+                ruleSelectorNilUsesHelmValues: false
       destination:
         server: '{{server}}'
         namespace: prometheus-operator

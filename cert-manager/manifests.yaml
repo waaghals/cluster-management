@@ -1,27 +1,26 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: external-dns-secret
+  name: cert-manager-manifests
   namespace: argocd
 spec:
   generators:
     - clusters: {} # All clusters
   template:
     metadata:
-      name: external-dns-secret-{{name}}
+      name: cert-manager-manifests-{{name}}
     spec:
       project: cluster-management
       source:
         repoURL: https://github.com/waaghals/cluster-management.git
         targetRevision: main
-        path: 'external-dns/application'
+        path: 'cert-manager/manifests'
         plugin:
-          name: argocd-vault-plugin
+          name: argocd-vault-plugin-kustomize
       destination:
         server: '{{server}}'
-        namespace: 'external-dns'
+        namespace: 'cert-manager'
       syncPolicy:
         automated:
           prune: true
           selfHeal: true
-

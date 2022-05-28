@@ -21,6 +21,8 @@ spec:
             domainFilters:
                - {{name}}.waaghals.dev
             provider: google
+            serviceMonitor:
+              enabled: true
             env:
               - name: GOOGLE_APPLICATION_CREDENTIALS
                 value: /etc/gcloud/gcloud-credentials.json

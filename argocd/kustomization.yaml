@@ -14,7 +14,17 @@ resources:
   - applications/root.yaml
   - applications/secrets.yaml
   - ingress.yaml
+  - service-monitor.yaml
 
 patchesStrategicMerge:
   - plugins/vault/argocd-repo-server-deploy.yaml
   - plugins/vault/argocd-cm.yaml
+  - patch-configmap.yaml
+
+configMapGenerator:
+  - name: grafana-dashboard
+    files:
+      - dashboard.json
+
+generatorOptions:
+   disableNameSuffixHash: true

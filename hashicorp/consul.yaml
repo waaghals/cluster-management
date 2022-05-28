@@ -10,17 +10,17 @@ spec:
     targetRevision: 0.44.0
     chart: consul
     helm:
-      parameters:
-        - name: "global.name"
-          value: "consul"
-        - name: "global.logJSON"
-          value: "true"
-        - name: "server.replicas"
-          value: "1"
-        - name: "server.bootstrapExpect"
-          value: "1"
-        - name: "server.disruptionBudget.maxUnavailable"
-          value: "0"
+      values: |
+        global:
+          name: consul
+          logJSON: true
+        server:
+          replicas: 1
+          bootstrapExpect: 1
+          disruptionBudget:
+            maxUnavailable: 0
+        metrics:
+          enabled: true
   destination:
     server: https://kubernetes.default.svc
     namespace: hashicorp

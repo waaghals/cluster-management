@@ -16,15 +16,14 @@ spec:
         repoURL: https://charts.jetstack.io
         targetRevision: v1.8.0
         helm:
-          parameters:
-            - name: "installCRDs"
-              value: "true"
-            - name: "prometheus.enabled"
-              value: "true"
-            - name: "prometheus.servicemonitor.enabled"
-              value: "true"
-            - name: "extraArgs"
-              value: "{--dns01-recursive-nameservers=8.8.8.8:53,1.1.1.1:53}"
+          values: |
+            installCRDs: true
+            prometheus:
+              enabled: true
+              servicemonitor:
+                enabled: true
+            extraArgs:
+              - --dns01-recursive-nameservers=8.8.8.8:53,1.1.1.1:53
       destination:
         server: '{{server}}'
         namespace: cert-manager
