@@ -10,7 +10,7 @@ spec:
     metadata:
       name: cert-manager-{{name}}
     spec:
-      project: cluster-management
+      project: ingress
       source:
         chart: cert-manager
         repoURL: https://charts.jetstack.io

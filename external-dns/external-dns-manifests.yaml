@@ -10,7 +10,7 @@ spec:
     metadata:
       name: external-dns-manifests-{{name}}
     spec:
-      project: cluster-management
+      project: ingress
       source:
         repoURL: https://github.com/waaghals/cluster-management.git
         targetRevision: main

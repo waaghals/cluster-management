@@ -10,7 +10,7 @@ spec:
     metadata:
       name: prometheus-operator-crd-{{name}}
     spec:
-      project: cluster-management
+      project: monitoring
       source:
         path: charts/kube-prometheus-stack/crds/
         directory:

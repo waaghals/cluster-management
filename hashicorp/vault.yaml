@@ -4,7 +4,7 @@ metadata:
   name: vault
   namespace: argocd
 spec:
-  project: cluster-management
+  project: security
   source:
     repoURL: https://helm.releases.hashicorp.com
     targetRevision: 0.20.1

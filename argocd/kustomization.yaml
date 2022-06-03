@@ -5,12 +5,17 @@ namespace: argocd
 resources:
   - namespace.yaml
   - repositories/external-dns-repository.yaml
+  - repositories/fluent-repository.yaml
   - repositories/prometheus-community-repository.yaml
   - repositories/jetstack-repository.yaml
   - repositories/hashicorp-repository.yaml
   - https://raw.githubusercontent.com/argoproj/argo-cd/ac8b7df9467ffcc0920b826c62c4b603a7bfed24/manifests/install.yaml
   - clusters/management-cluster.yaml
   - projects/cluster-manager.yaml
+  - projects/continous-deployment.yaml
+  - projects/ingress.yaml
+  - projects/monitoring.yaml
+  - projects/security.yaml
   - applications/root.yaml
   - applications/secrets.yaml
   - ingress.yaml
@@ -25,6 +30,12 @@ configMapGenerator:
   - name: grafana-dashboard
     files:
       - dashboard.json
+  - name: argocd-cmd-params-cm
+    behavior: merge
+    literals:
+      - reposerver.log.format=json
+      - server.log.format=json
+      - controller.log.format=json
 
 generatorOptions:
    disableNameSuffixHash: true

@@ -1,0 +1,296 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana
+  namespace: argocd
+spec:
+  project: monitoring
+  source:
+    repoURL: https://grafana.github.io/helm-charts
+    targetRevision: 6.29.5
+    chart: grafana
+    helm:
+      values: |
+        nameOverride: grafana
+        fullnameOverride: grafana
+        autoscaling:
+          enabled: false
+          minReplicas: 1
+          maxReplicas: 10
+          metrics:
+            - type: Resource
+              resource:
+              name: cpu
+              targetAverageUtilization: 60
+            - type: Resource
+              resource:
+              name: memory
+              targetAverageUtilization: 60
+
+        
+        # Extra configmaps to mount in grafana pods
+        # Values are templated.
+        extraConfigmapMounts: []
+          # - name: certs-configmap
+          #   mountPath: /etc/grafana/ssl/
+          #   subPath: certificates.crt # (optional)
+          #   configMap: certs-configmap
+        #   readOnly: true
+        
+        
+        extraEmptyDirMounts: []
+          # - name: provisioning-notifiers
+        #   mountPath: /etc/grafana/provisioning/notifiers
+        
+        downloadDashboards:
+          env: {}
+          envFromSecret: ""
+          resources: {}
+        
+       
+        serviceMonitor:
+          enabled: true
+        
+        # overrides pod.spec.hostAliases in the grafana deployment's pods
+        hostAliases: []
+          # - ip: "1.2.3.4"
+          #   hostnames:
+        #     - "my.host.com"
+        
+        ingress:
+          enabled: true
+          ingressClassName: nginx
+          annotations:
+            cert-manager.io/cluster-issuer: letsencrypt
+          hosts:
+            - grafana.management.waaghals.dev
+          tls:
+            - secretName: grafana-tls
+              hosts:
+                - grafana.management.waaghals.dev
+        
+        ## Enable persistence using Persistent Volume Claims
+        ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
+        ##
+        persistence:
+          type: pvc
+          enabled: false
+          # storageClassName: default
+          accessModes:
+            - ReadWriteOnce
+          size: 10Gi
+          # annotations: {}
+          finalizers:
+            - kubernetes.io/pvc-protection
+          # selectorLabels: {}
+          ## Sub-directory of the PV to mount. Can be templated.
+          # subPath: ""
+          ## Name of an existing PVC. Can be templated.
+          # existingClaim:
+        
+          ## If persistence is not enabled, this allows to mount the
+          ## local storage in-memory to improve performance
+          ##
+          inMemory:
+            enabled: false
+            ## The maximum usage on memory medium EmptyDir would be
+            ## the minimum value between the SizeLimit specified
+            ## here and the sum of memory limits of all containers in a pod
+            ##
+            # sizeLimit: 300Mi
+        
+        adminUser: admin
+        adminPassword: admin
+        
+        # Use an existing secret for the admin user.
+        admin:
+          ## Name of the secret. Can be templated.
+          existingSecret: ""
+          userKey: admin-user
+          passwordKey: admin-password
+  
+        enableServiceLinks: false
+        
+        ## Additional grafana server secret mounts
+        # Defines additional mounts with secrets. Secrets must be manually created in the namespace.
+        extraSecretMounts: []
+          # - name: secret-files
+          #   mountPath: /etc/secrets
+          #   secretName: grafana-secret-files
+          #   readOnly: true
+          #   subPath: ""
+          #
+          # for AWS EKS (cloudwatch) use the following (see also instruction in env: above)
+          # - name: aws-iam-token
+          #   mountPath: /var/run/secrets/eks.amazonaws.com/serviceaccount
+          #   readOnly: true
+          #   projected:
+          #     defaultMode: 420
+          #     sources:
+          #       - serviceAccountToken:
+          #           audience: sts.amazonaws.com
+          #           expirationSeconds: 86400
+          #           path: token
+          #
+          # for CSI e.g. Azure Key Vault use the following
+          # - name: secrets-store-inline
+          #  mountPath: /run/secrets
+          #  readOnly: true
+          #  csi:
+          #    driver: secrets-store.csi.k8s.io
+          #    readOnly: true
+          #    volumeAttributes:
+          #      secretProviderClass: "akv-grafana-spc"
+          #    nodePublishSecretRef:                       # Only required when using service principal mode
+        #       name: grafana-akv-creds                  # Only required when using service principal mode
+        
+        ## Additional grafana server volume mounts
+        # Defines additional volume mounts.
+        extraVolumeMounts: []
+          # - name: extra-volume-0
+          #   mountPath: /mnt/volume0
+          #   readOnly: true
+          #   existingClaim: volume-claim
+          # - name: extra-volume-1
+          #   mountPath: /mnt/volume1
+          #   readOnly: true
+        #   hostPath: /usr/shared/
+
+        
+        ## Pass the plugins you want installed as a list.
+        ##
+        plugins: []
+          # - digrich-bubblechart-panel
+        # - grafana-clock-panel
+        
+        ## Configure grafana datasources
+        ## ref: http://docs.grafana.org/administration/provisioning/#datasources
+        ##
+        datasources:
+          datasources.yaml:
+            apiVersion: 1
+            datasources:
+            - name: Prometheus
+              type: prometheus
+              url: http://prometheus-prometheus.prometheus-operator:9090
+              access: proxy
+              isDefault: true
+            - name: Loki
+              type: loki
+              access: proxy
+              url: http://loki-query-frontend.loki:3100
+        
+        ## Configure notifiers
+        ## ref: http://docs.grafana.org/administration/provisioning/#alert-notification-channels
+        ##
+        notifiers: {}
+        #  notifiers.yaml:
+        #    notifiers:
+        #    - name: email-notifier
+        #      type: email
+        #      uid: email1
+        #      # either:
+        #      org_id: 1
+        #      # or
+        #      org_name: Main Org.
+        #      is_default: true
+        #      settings:
+        #        addresses: an_email_address@example.com
+        #    delete_notifiers:
+        
+        ## Configure grafana dashboard providers
+        ## ref: http://docs.grafana.org/administration/provisioning/#dashboards
+        ##
+        ## `path` must be /var/lib/grafana/dashboards/<provider_name>
+        ##
+        dashboardProviders: {}
+        #  dashboardproviders.yaml:
+        #    apiVersion: 1
+        #    providers:
+        #    - name: 'default'
+        #      orgId: 1
+        #      folder: ''
+        #      type: file
+        #      disableDeletion: false
+        #      editable: true
+        #      options:
+        #        path: /var/lib/grafana/dashboards/default
+        
+        ## Configure grafana dashboard to import
+        ## NOTE: To use dashboards you must also enable/configure dashboardProviders
+        ## ref: https://grafana.com/dashboards
+        ##
+        ## dashboards per provider, use provider name as key.
+        ##
+        dashboards: {}
+          # default:
+          #   some-dashboard:
+          #     json: |
+          #       $RAW_JSON
+          #   custom-dashboard:
+          #     file: dashboards/custom-dashboard.json
+          #   prometheus-stats:
+          #     gnetId: 2
+          #     revision: 2
+          #     datasource: Prometheus
+          #   local-dashboard:
+          #     url: https://example.com/repository/test.json
+          #     token: ''
+          #   local-dashboard-base64:
+          #     url: https://example.com/repository/test-b64.json
+          #     token: ''
+        #     b64content: true
+        
+        ## Reference to external ConfigMap per provider. Use provider name as key and ConfigMap name as value.
+        ## A provider dashboards must be defined either by external ConfigMaps or in values.yaml, not in both.
+        ## ConfigMap data example:
+        ##
+        ## data:
+        ##   example-dashboard.json: |
+        ##     RAW_JSON
+        ##
+        dashboardsConfigMaps: {}
+        #  default: ""
+        
+        ## Sidecars that collect the configmaps with specified label and stores the included files them into the respective folders
+        ## Requires at least Grafana 5 to work and can't be used together with parameters dashboardProviders, datasources and dashboards
+        sidecar:
+          image:
+            repository: quay.io/kiwigrid/k8s-sidecar
+            tag: 1.15.6
+            sha: ""
+          imagePullPolicy: IfNotPresent
+          resources: {}
+          #   limits:
+          #     cpu: 100m
+          #     memory: 100Mi
+          #   requests:
+          #     cpu: 50m
+          #     memory: 50Mi
+          securityContext: {}
+          # skipTlsVerify Set to true to skip tls verification for kube api calls
+          # skipTlsVerify: true
+          enableUniqueFilenames: false
+          readinessProbe: {}
+          livenessProbe: {}
+          dashboards:
+            enabled: true
+            SCProvider: true
+            label: dashboard.grafana.com
+            folder: /tmp/dashboards
+            searchNamespace: ALL
+            folderAnnotation: folder.grafana.com
+
+          datasources:
+            enabled: true
+            label: datasource.grafana.com
+            searchNamespace: ALL
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: grafana
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

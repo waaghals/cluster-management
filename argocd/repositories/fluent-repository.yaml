@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: fluent-repository
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  url: https://fluent.github.io/helm-charts
+  name: fluent
+  type: helm

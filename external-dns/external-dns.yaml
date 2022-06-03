@@ -10,7 +10,7 @@ spec:
     metadata:
       name: external-dns-{{name}}
     spec:
-      project: cluster-management
+      project: ingress
       source:
         chart: external-dns
         repoURL: https://kubernetes-sigs.github.io/external-dns/

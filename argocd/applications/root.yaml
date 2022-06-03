@@ -11,14 +11,17 @@ spec:
         directories:
           - path: 'argocd'
           - path: 'prometheus-operator'
+          - path: 'fluent-bit'
           - path: 'hashicorp'
           - path: 'external-dns'
           - path: 'cert-manager'
+          - path: 'loki'
+          - path: 'grafana'
   template:
     metadata:
-      name: '{{path.basename}}'
+      name: 'meta-{{path.basename}}'
     spec:
-      project: cluster-management
+      project: continuous-deployment
       source:
         repoURL: https://github.com/waaghals/cluster-management.git
         targetRevision: main
