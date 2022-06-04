@@ -28,12 +28,12 @@ spec:
                 value: /etc/gcloud/gcloud-credentials.json
             extraVolumeMounts:
               - mountPath: /etc/gcloud
-                name: gcloud-config
+                name: gcloud-credentials
                 readOnly: true
             extraVolumes:
-              - name: gcloud-config
+              - name: gcloud-credentials
                 secret:
-                  secretName: gcloud-config
+                  secretName: gcloud-credentials
             extraArgs:
               - --google-project=waaghals-development
       destination:

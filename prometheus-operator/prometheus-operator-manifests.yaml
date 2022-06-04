@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: prometheus-operator-manifests
+  namespace: argocd
+spec:
+  generators:
+    - clusters: {} # All clusters
+  template:
+    metadata:
+      name: prometheus-operator-manifests-{{name}}
+    spec:
+      project: monitoring
+      source:
+        repoURL: https://github.com/waaghals/cluster-management.git
+        targetRevision: main
+        path: 'prometheus-operator/manifests'
+        plugin:
+          name: argocd-vault-plugin
+      destination:
+        server: '{{server}}'
+        namespace: 'prometheus-operator'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true

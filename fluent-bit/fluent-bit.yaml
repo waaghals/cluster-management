@@ -132,8 +132,8 @@ spec:
                     Port 443
                     Tls on
                     Tls.Verify on
-                    Http_User user
-                    Http_Passwd pass
+                    Http_User loki
+                    Http_Passwd <path:secret/data/loki#password>
                     Labels cluster={{name}},namespace=$kubernetes['namespace_name'],pod=$kubernetes['pod_name'],container=$kubernetes['container_name'],node=$kubernetes['host']
               ## https://docs.fluentbit.io/manual/pipeline/parsers
               customParsers: |

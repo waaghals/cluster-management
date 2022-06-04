@@ -91,3 +91,8 @@ Bootstrapping Hashicorp Vault requires manual configuration of keys and configur
    ```
 10. Restart rollout of the `argocd-repo-server` so it reads the new secret.
 11. Delete the secret `repo-dddddd` from namespace `argocd`.
+
+# TODO's
+* Configure all credentials from secrets
+* Inject credential secrets with values from Vault
+* Enable autoscaling

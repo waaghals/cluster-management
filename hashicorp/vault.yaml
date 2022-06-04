@@ -15,17 +15,19 @@ spec:
           enabled: true
         injector:
           enabled: false
-        ingress:
-          enabled: true
-          ingressClassName: nginx
-          annotations:
-            cert-manager.io/cluster-issuer: letsencrypt
-          hosts:
-            - vault.management.waaghals.dev
-          tls:
-            - secretName: vault-cert
-              hosts:
-                - vault.management.waaghals.dev
+        server:
+          ingress:
+            enabled: true
+            ingressClassName: nginx
+            annotations:
+              cert-manager.io/cluster-issuer: letsencrypt
+            hosts:
+              - host: vault.management.waaghals.dev
+                paths: []
+            tls:
+              - secretName: vault-tls
+                hosts:
+                  - vault.management.waaghals.dev
         ha:
           enabled: true
         ui:

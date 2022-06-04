@@ -17,6 +17,8 @@ spec:
           - path: 'cert-manager'
           - path: 'loki'
           - path: 'grafana'
+          - path: 'mimir'
+          - path: 'nginx-ingress'
   template:
     metadata:
       name: 'meta-{{path.basename}}'
