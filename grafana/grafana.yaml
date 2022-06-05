@@ -170,15 +170,19 @@ spec:
           datasources.yaml:
             apiVersion: 1
             datasources:
-            - name: Prometheus
+            - name: Prometheus (Management)
               type: prometheus
               url: http://prometheus-prometheus.prometheus-operator:9090
               access: proxy
-              isDefault: true
             - name: Loki
               type: loki
               access: proxy
               url: http://loki-query-frontend.loki:3100
+            - name: Mimir
+              type: prometheus
+              access: proxy
+              isDefault: true
+              url: http://mimir-query-frontend.mimir:8080/prometheus
         
         ## Configure notifiers
         ## ref: http://docs.grafana.org/administration/provisioning/#alert-notification-channels
@@ -282,7 +286,7 @@ spec:
             folderAnnotation: folder.grafana.com
 
           datasources:
-            enabled: true
+            enabled: false
             label: datasource.grafana.com
             searchNamespace: ALL
   destination:

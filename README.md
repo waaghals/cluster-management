@@ -96,3 +96,8 @@ Bootstrapping Hashicorp Vault requires manual configuration of keys and configur
 * Configure all credentials from secrets
 * Inject credential secrets with values from Vault
 * Enable autoscaling
+
+## Checklist
+| Application | Json log format | Prometheus metrics | Grafana dashboard | Secrets from Vault | Tracing | 
+|-------------|-----------------|--------------------|-------------------|--------------------|---------|
+|             |                 |                    |                   |                    |         |

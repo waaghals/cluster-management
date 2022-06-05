@@ -108,7 +108,7 @@ spec:
                     multiline.parser docker, cri
                     Tag kube.*
                     Mem_Buf_Limit 5MB
-                    Skip_Long_Lines On
+                    Skip_Long_Lines Off
                 [INPUT]
                     Name systemd
                     Tag host.*

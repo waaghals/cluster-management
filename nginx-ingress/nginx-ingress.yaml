@@ -1,0 +1,78 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: nginx-ingress
+  namespace: argocd
+spec:
+  generators:
+    - clusters: {} # All clusters
+  template:
+    metadata:
+      name: nginx-ingress-{{name}}
+    spec:
+      project: ingress
+      source:
+        chart: ingress-nginx
+        repoURL: https://kubernetes.github.io/ingress-nginx
+        targetRevision: 4.1.3
+        helm:
+          values: |
+            nameOverride: nginx
+            fullnameOverride: nginx
+            
+            controller:
+              name: controller
+              kind: Deployment
+              config:
+                log-format-escape-json: "true"
+                log-format-upstream: '{"timestamp": "$time_iso8601", "requestID": "$req_id", "proxyUpstreamName":
+                "$proxy_upstream_name", "proxyAlternativeUpstreamName": "$proxy_alternative_upstream_name","upstreamStatus":
+                "$upstream_status", "upstreamAddr": "$upstream_addr","httpRequest":{"requestMethod":
+                "$request_method", "requestUrl": "$host$request_uri", "status": $status,"requestSize":
+                "$request_length", "responseSize": "$upstream_response_length", "userAgent": "$http_user_agent",
+                "remoteIp": "$remote_addr", "referer": "$http_referer", "latency": "$upstream_response_time s",
+                "protocol":"$server_protocol"}}'
+              affinity:
+                podAntiAffinity:
+                  preferredDuringSchedulingIgnoredDuringExecution:
+                  - weight: 100
+                    podAffinityTerm:
+                      labelSelector:
+                        matchExpressions:
+                        - key: app.kubernetes.io/name
+                          operator: In
+                          values:
+                          - ingress-nginx
+                        - key: app.kubernetes.io/instance
+                          operator: In
+                          values:
+                          - ingress-nginx
+                        - key: app.kubernetes.io/component
+                          operator: In
+                          values:
+                          - controller
+                      topologyKey: kubernetes.io/hostname
+              autoscaling:
+                enabled: false
+                minReplicas: 1
+                maxReplicas: 11
+                targetCPUUtilizationPercentage: 50
+                targetMemoryUtilizationPercentage: 50
+              metrics:
+                port: 10254
+                # if this port is changed, change healthz-port: in extraArgs: accordingly
+                enabled: true
+                serviceMonitor:
+                  enabled: true
+
+            defaultBackend:
+              enabled: true
+      destination:
+        server: '{{server}}'
+        namespace: nginx-ingress
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
