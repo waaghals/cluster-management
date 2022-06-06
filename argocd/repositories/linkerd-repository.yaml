@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: linkerd-repository
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  url: https://helm.linkerd.io/stable
+  name: linkerd
+  type: helm

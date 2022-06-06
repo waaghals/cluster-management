@@ -19,6 +19,7 @@ spec:
           - path: 'grafana'
           - path: 'mimir'
           - path: 'nginx-ingress'
+          - path: 'linkerd'
   template:
     metadata:
       name: 'meta-{{path.basename}}'

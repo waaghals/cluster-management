@@ -98,6 +98,6 @@ Bootstrapping Hashicorp Vault requires manual configuration of keys and configur
 * Enable autoscaling
 
 ## Checklist
-| Application | Json log format | Prometheus metrics | Grafana dashboard | Secrets from Vault | Tracing | 
+| Application | Json log format | Prometheus metrics | Grafana dashboard | Secrets from Vault | Tracing | Alertmanager | 
 |-------------|-----------------|--------------------|-------------------|--------------------|---------|
 |             |                 |                    |                   |                    |         |
