@@ -4,21 +4,20 @@ kind: Kustomization
 namespace: argocd
 resources:
   - namespace.yaml
+  - repositories/crossplane-repository.yaml
   - repositories/external-dns-repository.yaml
   - repositories/fluent-repository.yaml
   - repositories/prometheus-community-repository.yaml
   - repositories/jetstack-repository.yaml
-  - repositories/linkerd-repository.yaml
   - repositories/nginx-repository.yaml
   - repositories/hashicorp-repository.yaml
   - https://raw.githubusercontent.com/argoproj/argo-cd/ac8b7df9467ffcc0920b826c62c4b603a7bfed24/manifests/install.yaml
   - clusters/management-cluster.yaml
-  - projects/cluster-manager.yaml
+  - projects/cluster-management.yaml
   - projects/continous-deployment.yaml
   - projects/ingress.yaml
   - projects/monitoring.yaml
   - projects/security.yaml
-  - projects/service-mesh.yaml
   - applications/root.yaml
   - applications/secrets.yaml
   - ingress.yaml
