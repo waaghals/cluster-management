@@ -8,7 +8,7 @@ spec:
     - clusters: {} # All clusters
   template:
     metadata:
-      name: seales-secrets-{{name}}
+      name: sealed-secrets-{{name}}
     spec:
       project: security
       source:
