@@ -13,7 +13,7 @@ spec:
       project: security
       source:
         chart: sealed-secrets
-        repoURL: https://charts.bitnami.com/bitnami
+        repoURL: https://bitnami-labs.github.io/sealed-secrets
         targetRevision: 2.6.4
         helm:
           values: |
