@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: fluent-bit-manifests
+  namespace: argocd
+spec:
+  generators:
+    - clusters: {} # All clusters
+  template:
+    metadata:
+      name: fluent-bit-manifests-{{name}}
+    spec:
+      project: monitoring
+      source:
+        repoURL: https://github.com/waaghals/cluster-management.git
+        targetRevision: main
+        path: 'fluent-bit/manifests'
+      destination:
+        server: '{{server}}'
+        namespace: 'fluent-bit'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true

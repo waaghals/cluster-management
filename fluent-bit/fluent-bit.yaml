@@ -32,6 +32,22 @@ spec:
               runAsNonRoot: true
               runAsUser: 1000
 
+            # Add extra envvars to configure loki loki-credentials
+            # These are parsed in the configuration file
+            envFrom:
+              - name: LOKI_USERNAME
+                valueFrom:
+                  secretKeyRef:
+                    name: loki-credentials
+                    key: username
+                    optional: false
+              - name: LOKI_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: loki-credentials
+                    key: password
+                    optional: false
+
             service:
               type: ClusterIP
               port: 2020
@@ -132,8 +148,8 @@ spec:
                     Port 443
                     Tls on
                     Tls.Verify on
-                    Http_User loki
-                    Http_Passwd <path:secret/data/loki#password>
+                    Http_User ${LOKI_USERNAME}
+                    Http_Passwd ${LOKI_PASSWORD}
                     Labels cluster={{name}},namespace=$kubernetes['namespace_name'],pod=$kubernetes['pod_name'],container=$kubernetes['container_name'],node=$kubernetes['host']
               ## https://docs.fluentbit.io/manual/pipeline/parsers
               customParsers: |
