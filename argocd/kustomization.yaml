@@ -4,7 +4,7 @@ kind: Kustomization
 namespace: argocd
 resources:
   - namespace.yaml
-  - repositories/bitnami-repositry.yaml
+  - repositories/bitnami-repository.yaml
   - repositories/cluster-management.yaml
   - repositories/external-dns-repository.yaml
   - repositories/fluent-repository.yaml
@@ -20,7 +20,6 @@ resources:
   - projects/monitoring.yaml
   - projects/security.yaml
   - applications/root.yaml
-  - applications/secrets.yaml
   - ingress.yaml
   - service-monitor.yaml
 
