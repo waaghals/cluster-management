@@ -19,7 +19,7 @@ spec:
           values: |
             metrics:
               serviceMonitor:
-                enabled: false # true
+                enabled: true
             namespaceOverride: sealed-secrets
       destination:
         server: '{{server}}'
