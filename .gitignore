@@ -1,2 +1,5 @@
 # Helm
 **/charts/*.tgz
+
+# Local secrets
+.secrets

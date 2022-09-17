@@ -9,8 +9,6 @@ spec:
     repoURL: https://github.com/waaghals/cluster-management.git
     targetRevision: main
     path: 'loki/manifests'
-    plugin:
-      name: argocd-vault-plugin
   destination:
     server: https://kubernetes.default.svc
     namespace: loki

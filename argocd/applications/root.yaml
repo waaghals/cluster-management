@@ -19,7 +19,7 @@ spec:
           - path: 'grafana'
           - path: 'mimir'
           - path: 'nginx-ingress'
-#          - path: 'crossplane'
+          - path: 'sealed-secrets'
   template:
     metadata:
       name: 'meta-{{path.basename}}'

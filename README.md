@@ -7,97 +7,84 @@ These applications provide the developers with the necessary tools to easily dep
 |-------------|--------------------|----------------|
 | ArcoCD      | yes                | no             |
 | ArcoCD      | yes                | no             |
-| Vault       | yes                | no             |
 | CertManager | yes                | yes            |
 | Prometheus  | yes                | yes            |
 | Thanos      | yes                | no             |
 | Grafana     | yes                | no             |
 | Linkerd     | no                 | yes            |
 
-# Deployment order
-Yellow: ApplicationSet
-Orange: Application
-```mermaid
-graph LR
- argocd-->root
- root-->argocd
- argocd-->secrets
-       
- prometheus-operator-->prometheus-operator-cluster-a
- prometheus-operator-->prometheus-operator-cluster-b
- prometheus-operator-->prometheus-operator-cluster-c
-
- root-->prometheus-operator
-
- root-->vault
- root-->consul
- 
-
- root-->external-dns
- external-dns-->external-dns-cluster-a
- external-dns-->external-dns-cluster-b
- external-dns-->external-dns-cluster-c
- root-->cert-manager
- cert-manager-->cert-manager-cluster-a
- cert-manager-->cert-manager-cluster-b
- cert-manager-->cert-manager-cluster-c
- root-->grafana
- root-->linkerd
- linkerd-->linkerd-cluster-a
- linkerd-->linkerd-cluster-b
- linkerd-->linkerd-cluster-c
-```
 
 ## Bootstrapping
 # ArgoCD
 Because ArgoCD is not available on an empty cluster, there is no way for it to deploy itself.
-To deploy a fresh ArgoCD installation, first deploy the kustomize manifest for ArgoCD manually into the management cluster.
-It does require a secret with credentials to Vault. But since Vault is not setup yet, we create an empty secret.
-We will fill the secret after we deployed Vault
+When we initially manually deploy ArgoCD, it will attempt to fetch the configured github repository with the manifests.
+This will fail.
 
-Because we deploy the CRDs from the same kustomization, we might need to deploy it multiple times until all CRD are succesfully registered.
+We need to seed the cluster with a private key for sealed-secrets.
 
-```shell
-cd argocd
-kustomize build | kubectl apply -f -
-kubectl create secret generic -n argocd argocd-vault-plugin-credentials
-```
+1. [Deploy a secret](https://github.com/bitnami-labs/sealed-secrets/blob/main/docs/bring-your-own-certificates.md) labeled `sealedsecrets.bitnami.com/sealed-secrets-key: active`
+2. Generate sealed-secrets in the repository and commit them.
+2. Manually deploy ArgoCD
+    ```shell
+    cd argocd
+    kustomize build | kubectl apply -f -
+    ```
+   Because we deploy the CRDs from the same kustomization, we might need to deploy it multiple times until all CRD are succesfully registered.
 
-# Hashicorp Vault
-This repository does not include the secret values needed to access the git repositories where the ArgoCD manifests are
-fetched from.
-Hashicorp Vault is used to manage secrets outside of git.
-It uses the argocd-vault-plugin to populate the secrets with their actual values when ArgoCD renders the manifests during deployment. 
+# Configuring credentials
+## Cert-manager
+1. Create service-account 'cert-manager' with the role 'DNS Administrator'
+2. Create new JSON key for this service account
+3. Save the JSON as a secret in Vault at 'secret/cert-manager/gcloud'
+4. Perform a hard refresh in Argocd for 'cert-manager-manifest-management'
 
-Bootstrapping Hashicorp Vault requires manual configuration of keys and configuration of required keys.
-1. Get `repo` scoped access token from Github.
-2. Configure this temporary git repository in ArgoCD web interface with the access token from step one. (use port-forwarding to access the interface)
-3. Wait until ArgoCD deployed Vault. (Note Vault's pods will not pass their readyness probes)
-4. Follow the [Initialize and unseal Vault](https://learn.hashicorp.com/tutorials/vault/kubernetes-raft-deployment-guide?in=vault/kubernetes#initialize-and-unseal-vault) instructions.
-5. Login into the web interface of Vault (again using port-forwarding). Use the root token from the previous step.
-6. Create a new `kv` secrets engine on path `secret`.
-7. Create a new secret on path `repositories/cluster-management`, with key/value `password/<token from step 1>`
-8. Delete the previous created secret
-   ```shell
-   kubectl delete secret -n argocd argocd-vault-plugin-credentials
-   ```
-9. Create a new secret to access Vault with the token from initializing Vault.
-   ```shell
-   kubectl create secret generic -n argocd argocd-vault-plugin-credentials \
-   --from-literal=VAULT_ADDR=http://vault.hashicorp:8200 \
-   --from-literal=VAULT_TOKEN=ping token-created-previous-step \
-   --from-literal=AVP_TYPE=vault \
-   --from-literal=AVP_AUTH_TYPE=token
-   ```
-10. Restart rollout of the `argocd-repo-server` so it reads the new secret.
-11. Delete the secret `repo-dddddd` from namespace `argocd`.
+## External-dns
+1. Create service-account 'external-dns' with the role 'DNS Administrator'
+2. Create new JSON key for this service account
+3. Save the JSON as a secret in Vault at 'secret/external-dns/gcloud'
+4. Perform a hard refresh in Argocd for 'external-dns-manifest-management'
+
+## Loki
+1. Create service-account 'loki' with the roles 'Storage Admin' & 'Storage Object Admin'
+2. Create new JSON key for this service account
+3. Save the JSON as a secret in Vault at 'secret/loki/gcloud'
+
+1. Generate a password  and save it in Vault at 'secret/loki#password'
+2. Encode the password as htpasswd
+3. Store encoded password in Vault at 'secret/loki#htpasswd'
+
+# Mimir
+1. Create service-account 'mimir' with the roles 'Storage Admin' & 'Storage Object Admin'
+2. Create new JSON key for this service account
+3. Save the JSON as a secret in Vault at 'secret/mimir/gcloud'
+
+1. Generate a password  and save it in Vault at 'secret/mimir#password'
+2. Encode the password as htpasswd
+3. Store encoded password in Vault at 'secret/mimir#htpasswd'
+ 
 
 # TODO's
-* Configure all credentials from secrets
-* Inject credential secrets with values from Vault
+* Configure all credentials from sealed-secrets
 * Enable autoscaling
 
 ## Checklist
-| Application | Json log format | Prometheus metrics | Grafana dashboard | Secrets from Vault | Tracing | Alertmanager | 
-|-------------|-----------------|--------------------|-------------------|--------------------|---------|
-|             |                 |                    |                   |                    |         |
+☑
+☒
+☐
+| Application    | Json log format | Prometheus metrics | Grafana dashboard | Sealed secrets     | Tracing | Alertmanager | 
+|----------------|-----------------|--------------------|-------------------|--------------------|---------|--------------|
+| ArgoCD         |                 |                    |                   |                    |         |              |
+| Cert-Manager   |                 |                    |                   |                    |         |              |
+| External-DNS   |                 |                    |                   |                    |         |              |
+| Fluent-Bit     |                 |                    |                   |                    |         |              |
+| Grafana        |                 |                    |                   |                    |         |              |
+| Loki           |                 |                    |                   |                    |         |              |
+| Mimi           |                 |                    |                   |                    |         |              |
+| Prometheus     |                 |                    |                   |                    |         |              |
+| Sealed secrets |                 |                    |                   |                    |         |              |
+
+
+# Provinioning a new cluster
+1. Create a cluster however you like
+2. Install the private key for sealed-secrets into the cluster by using your pre-generated private key. 
+3. Create a sealed-secret in `argocd/clusters` folder with the cluster credentials. (Don't forget the `argocd.argoproj.io/secret-type: cluster` label)

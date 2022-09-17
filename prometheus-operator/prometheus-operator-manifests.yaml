@@ -15,8 +15,6 @@ spec:
         repoURL: https://github.com/waaghals/cluster-management.git
         targetRevision: main
         path: 'prometheus-operator/manifests'
-        plugin:
-          name: argocd-vault-plugin
       destination:
         server: '{{server}}'
         namespace: 'prometheus-operator'

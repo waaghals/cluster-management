@@ -15,8 +15,6 @@ spec:
         repoURL: https://github.com/waaghals/cluster-management.git
         targetRevision: main
         path: 'cert-manager/manifests'
-        plugin:
-          name: argocd-vault-plugin-kustomize
       destination:
         server: '{{server}}'
         namespace: 'cert-manager'

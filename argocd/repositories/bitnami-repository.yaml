@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: crossplane-repository
+  name: bitname-repository
   labels:
     argocd.argoproj.io/secret-type: repository
 stringData:
-  url: https://charts.crossplane.io/stable
-  name: crossplane
+  url: https://charts.bitnami.com/bitnami
+  name: bitnami
   type: helm

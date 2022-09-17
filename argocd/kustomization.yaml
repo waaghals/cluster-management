@@ -4,13 +4,14 @@ kind: Kustomization
 namespace: argocd
 resources:
   - namespace.yaml
-  - repositories/crossplane-repository.yaml
+  - repositories/bitnami-repositry.yaml
+  - repositories/cluster-management.yaml
   - repositories/external-dns-repository.yaml
   - repositories/fluent-repository.yaml
-  - repositories/prometheus-community-repository.yaml
+  - repositories/grafana-repository.yaml
   - repositories/jetstack-repository.yaml
   - repositories/nginx-repository.yaml
-  - repositories/hashicorp-repository.yaml
+  - repositories/prometheus-community-repository.yaml
   - https://raw.githubusercontent.com/argoproj/argo-cd/ac8b7df9467ffcc0920b826c62c4b603a7bfed24/manifests/install.yaml
   - clusters/management-cluster.yaml
   - projects/cluster-management.yaml
@@ -24,8 +25,6 @@ resources:
   - service-monitor.yaml
 
 patchesStrategicMerge:
-  - plugins/vault/argocd-repo-server-deploy.yaml
-  - plugins/vault/argocd-cm.yaml
   - patch-configmap.yaml
 
 configMapGenerator:

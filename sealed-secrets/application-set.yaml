@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: sealed-secrets
+  namespace: argocd
+spec:
+  generators:
+    - clusters: {} # All clusters
+  template:
+    metadata:
+      name: seales-secrets-{{name}}
+    spec:
+      project: security
+      source:
+        chart: sealed-secrets
+        repoURL: https://charts.bitnami.com/bitnami
+        targetRevision:  0.18.2 
+        helm:
+          values: |
+            metrics:
+              serviceMonitor:
+                enabled: true
+            namespaceOverride: sealed-secrets
+      destination:
+        server: '{{server}}'
+        namespace: sealed-secrets
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
