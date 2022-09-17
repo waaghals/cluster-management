@@ -34,7 +34,7 @@ spec:
 
             # Add extra envvars to configure loki loki-credentials
             # These are parsed in the configuration file
-            envFrom:
+            env:
               - name: LOKI_USERNAME
                 valueFrom:
                   secretKeyRef:
