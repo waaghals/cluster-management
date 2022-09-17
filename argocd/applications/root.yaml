@@ -10,15 +10,14 @@ spec:
         # TODO fix pattern
         directories:
           - path: 'argocd'
-          - path: 'prometheus-operator'
-          - path: 'fluent-bit'
-          - path: 'hashicorp'
-          - path: 'external-dns'
           - path: 'cert-manager'
-          - path: 'loki'
+          - path: 'external-dns'
+          - path: 'fluent-bit'
           - path: 'grafana'
+          - path: 'loki'
           - path: 'mimir'
           - path: 'nginx-ingress'
+          - path: 'prometheus-operator'
           - path: 'sealed-secrets'
   template:
     metadata:
