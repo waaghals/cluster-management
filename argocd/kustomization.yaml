@@ -24,7 +24,8 @@ resources:
   - service-monitor.yaml
 
 patchesStrategicMerge:
-  - patch-configmap.yaml
+  - patch-dashboard.yaml
+  - patch-config.yaml
 
 configMapGenerator:
   - name: grafana-dashboard
